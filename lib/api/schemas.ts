@@ -80,11 +80,31 @@ export const recBody = z.strictObject({
   note: z.string().max(500).nullish(),
 });
 
+export const SORTS = ['latest', 'popular', 'week'] as const;
+
 export const communityQuery = z.object({
+  sort: z.enum(SORTS).default('latest'),
+  q: z.string().trim().min(1).max(100).optional(),
   category: category.optional(),
   tier: tier.optional(),
   source: source.optional(),
   adult: z.enum(['1']).optional(),
   limit: z.coerce.number().int().min(1).max(50).default(20),
   cursor: z.string().max(200).optional(),
+});
+
+/** A reader suggesting a bookmark for everyone. Reviewed before it is shown. */
+export const communityBookmarkBody = z.strictObject({
+  source: z.enum(['mangadex', 'webtoons', 'hentai20']),
+  seriesId: z.string().min(1).max(200),
+  seriesTitle: z.string().min(1).max(300),
+  chapterId: z.string().min(1).max(300),
+  chapterName: z.string().min(1).max(300),
+  page: z.number().int().positive().max(10000),
+  note: z.string().max(300).nullish(),
+});
+
+export const communityBookmarksQuery = z.object({
+  source: z.enum(['mangadex', 'webtoons', 'hentai20']),
+  seriesId: z.string().min(1).max(200),
 });

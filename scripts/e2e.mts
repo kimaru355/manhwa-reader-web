@@ -139,16 +139,69 @@ try {
   r = await call('DELETE', `/api/v1/me/recommendations/not-a-uuid`, A.token);
   ok('bad id -> 404', r.status === 404, r);
 
+  // community: votes, sorting, filters
+  const recBody = { source: 'mangadex', seriesId: 'e2e-vote-1', title: 'E2E Votable', category: 'manga', tier: 'good', note: 'x' };
+  r = await call('POST', '/api/v1/me/recommendations', B.token, recBody);
+  const voteId = r.json.id as string;
+  r = await call('PUT', `/api/v1/community/recommendations/${voteId}/vote`, B.token);
+  ok("can't vote for your own recommendation (403)", r.status === 403, r);
+  r = await call('PUT', `/api/v1/community/recommendations/${voteId}/vote`, A.token);
+  ok('vote counts', r.status === 200 && r.json.votes === 1 && r.json.voted === true, r);
+  r = await call('PUT', `/api/v1/community/recommendations/${voteId}/vote`, A.token);
+  ok('voting twice is the same as once', r.json.votes === 1, r);
+  r = await call('GET', '/api/v1/recommendations/community?sort=popular&limit=5', A.token);
+  ok('popular lists it first with voted=true', r.json.items[0]?.id === voteId && r.json.items[0].votes === 1 && r.json.items[0].voted === true, r.json);
+  r = await call('GET', '/api/v1/recommendations/community?sort=popular&limit=5');
+  ok('anonymous sees votes but voted=false', r.json.items[0]?.votes === 1 && r.json.items[0].voted === false, r.json);
+  r = await call('GET', '/api/v1/recommendations/community?sort=week&q=votable');
+  ok('week sort + title search', r.json.items.length === 1 && r.json.items[0].id === voteId, r.json);
+  r = await call('GET', '/api/v1/recommendations/community?q=%25');
+  ok('% in search is literal, not a wildcard', r.json.items.length === 0, r.json);
+  r = await call('GET', '/api/v1/recommendations/community?sort=nonsense');
+  ok('bad sort -> 400', r.status === 400, r);
+  r = await call('DELETE', `/api/v1/community/recommendations/${voteId}/vote`, A.token);
+  ok('unvote', r.json.votes === 0 && r.json.voted === false, r);
+  r = await call('PUT', `/api/v1/community/recommendations/not-a-uuid/vote`, A.token);
+  ok('vote on bad id -> 404', r.status === 404, r);
+  r = await call('PUT', `/api/v1/community/recommendations/${voteId}/vote`);
+  ok('vote needs sign-in', r.status === 401, r);
+  await call('DELETE', `/api/v1/me/recommendations/${voteId}`, B.token);
+
+  // community bookmarks: submit -> hidden until approved
+  const cb = { source: 'mangadex', seriesId: 'e2e-series', seriesTitle: 'E2E Series', chapterId: 'e2e-ch-1', chapterName: 'Ch. 1', page: 4, note: 'great panel' };
+  r = await call('POST', '/api/v1/community/bookmarks', A.token, cb);
+  ok('submit bookmark -> pending (201)', r.status === 201 && r.json.status === 'pending', r);
+  const cbId = r.json.id as string;
+  r = await call('POST', '/api/v1/community/bookmarks', A.token, cb);
+  ok('duplicate submission -> 409', r.status === 409, r);
+  r = await call('POST', '/api/v1/community/bookmarks', null, cb);
+  ok('submit needs sign-in', r.status === 401, r);
+  r = await call('POST', '/api/v1/community/bookmarks', A.token, { ...cb, source: 'external', page: 5 });
+  ok('external source not allowed', r.status === 400, r);
+  r = await call('GET', '/api/v1/community/bookmarks?source=mangadex&seriesId=e2e-series');
+  ok('pending bookmark is not public', r.status === 200 && r.json.items.length === 0, r.json);
+  r = await call('GET', '/api/v1/me/community-bookmarks', A.token);
+  ok('owner sees pending submission', r.json.items[0]?.status === 'pending', r.json);
+  r = await call('GET', '/api/v1/me/community-bookmarks', B.token);
+  ok("other users don't see it", r.json.items.length === 0, r.json);
+  await sql.query(`update community_bookmarks set status='approved' where id=$1`, [cbId]);
+  r = await call('GET', '/api/v1/community/bookmarks?source=mangadex&seriesId=e2e-series');
+  ok('approved bookmark is public, without user info', r.json.items.length === 1 && r.json.items[0].page === 4 && !('userId' in r.json.items[0]) && !('user_id' in r.json.items[0]), r.json);
+  r = await call('DELETE', `/api/v1/me/community-bookmarks/${cbId}`, B.token);
+  ok("B can't withdraw A's suggestion (404)", r.status === 404, r);
+  r = await call('DELETE', `/api/v1/me/community-bookmarks/${cbId}`, A.token);
+  ok('A withdraws own (204)', r.status === 204, r);
+
   // account deletion removes everything
   await call('POST', '/api/v1/me/sync', A.token, { bookmarks: { put: [bm], remove: [] } });
   r = await call('DELETE', '/api/v1/me', A.token);
   ok('DELETE /me 204', r.status === 204, r);
   const left = await sql.query(
-    `select (select count(*) from bookmarks where user_id=$1)::int b, (select count(*) from user_recommendations where user_id=$1)::int r,
+    `select (select count(*) from bookmarks where user_id=$1)::int b, (select count(*) from user_recommendations where user_id=$1)::int r, (select count(*) from community_bookmarks where user_id=$1)::int cb,
             (select count(*) from neon_auth."user" where id=$1)::int u`,
     [A.id],
   );
-  ok('account and all rows gone', left[0].b === 0 && left[0].r === 0 && left[0].u === 0, left[0]);
+  ok('account and all rows gone', left[0].b === 0 && left[0].r === 0 && left[0].cb === 0 && left[0].u === 0, left[0]);
 
   // other endpoints
   r = await call('GET', '/recommendations.json');

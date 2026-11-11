@@ -11,9 +11,27 @@ Rate limits: auth 10/min (per IP), writes 60/min (per user), reads 300/min.
 ## Recommendations (public)
 
 `GET /recommendations.json` is the file the app already reads (built from the database, ETag, cached 5 min).
-`GET /api/v1/recommendations/community?category&tier&source&limit(<=50)&cursor&adult=1` returns
-`{ items: [{ id, source, seriesId, title, cover, url, category, tier, note, createdAt }], nextCursor }`, newest first.
-The `interesting` category is only returned with `adult=1`.
+`GET /api/v1/recommendations/community?sort&q&category&tier&source&limit(<=50)&cursor&adult=1` returns
+`{ items: [{ id, source, seriesId, title, cover, url, category, tier, note, createdAt, votes, voted }], nextCursor }`.
+`sort` is `latest` (default, newest first), `popular` (most votes) or `week` (most votes in the last 7 days); ties are newest first.
+`q` searches titles. The `interesting` category is only returned with `adult=1`. Send a bearer token to get `voted`
+(whether the caller has voted); without one it is always `false`. Public responses are cached for 30 seconds.
+
+`PUT /api/v1/community/recommendations/:id/vote` upvotes and `DELETE` takes the vote back (signed in). Both are
+idempotent and return `{ votes, voted }`. You cannot vote for your own recommendation (403).
+
+## Community bookmarks
+
+Readers suggest a bookmark; it stays hidden until an admin approves it at `/admin/bookmarks`.
+
+`GET /api/v1/community/bookmarks?source&seriesId` (public) returns the approved ones for a title:
+`{ items: [{ id, chapterId, chapterName, page, note, createdAt }] }`. Nothing about who suggested them is exposed.
+
+`POST /api/v1/community/bookmarks` (signed in) takes `{ source (mangadex|webtoons|hentai20), seriesId, seriesTitle, chapterId, chapterName, page, note?(<=300) }`
+and returns 201 `{ id, status: 'pending' }`. The same chapter and page can only be suggested once per user (409); up to 20 per day.
+
+`GET /api/v1/me/community-bookmarks` returns your suggestions with `status` (`pending`, `approved`, `rejected`) and
+`rejectReason`. `DELETE /api/v1/me/community-bookmarks/:id` withdraws one (204).
 
 ## Accounts
 

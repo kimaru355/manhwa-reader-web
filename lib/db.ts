@@ -86,6 +86,39 @@ export function ensureSchema() {
     await db().query(
       `create index if not exists user_recs_public on user_recommendations (created_at desc, id desc)`,
     );
+    await db().query(
+      `create table if not exists recommendation_votes (
+      user_id uuid not null references neon_auth."user"(id) on delete cascade,
+      recommendation_id uuid not null references user_recommendations(id) on delete cascade,
+      created_at timestamptz not null default now(),
+      primary key (user_id, recommendation_id)
+    )`,
+    );
+    await db().query(
+      `create index if not exists votes_by_rec on recommendation_votes (recommendation_id, created_at)`,
+    );
+    // Bookmarks suggested by readers. Only approved ones are ever shown to other people.
+    await db().query(`create table if not exists community_bookmarks (
+      id uuid primary key default gen_random_uuid(),
+      user_id uuid not null references neon_auth."user"(id) on delete cascade,
+      source text not null check (source in ('mangadex','webtoons','hentai20')),
+      series_id text not null,
+      series_title text not null,
+      chapter_id text not null,
+      chapter_name text not null,
+      page int not null check (page > 0),
+      note text check (char_length(note) <= 300),
+      status text not null default 'pending' check (status in ('pending','approved','rejected')),
+      reject_reason text,
+      created_at timestamptz not null default now(),
+      reviewed_at timestamptz,
+      reviewed_by text,
+      unique (user_id, source, series_id, chapter_id, page)
+    )`);
+    await db().query(
+      `create index if not exists community_bm_approved on community_bookmarks (source, series_id) where status = 'approved'`,
+    );
+    await db().query(`create index if not exists community_bm_status on community_bookmarks (status, created_at)`);
     await db().query(`create table if not exists rate_limits (
       key text not null, bucket bigint not null, n int not null default 0, primary key (key, bucket)
     )`);

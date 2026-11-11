@@ -9,6 +9,9 @@ export type RecRow = {
   tier: string;
   note: string | null;
   created_at: string | Date;
+  /** Present on community listings. */
+  votes?: number;
+  voted?: boolean;
 };
 
 /** Public shape. No user id or email, ever. */
@@ -23,4 +26,5 @@ export const publicRec = (r: RecRow) => ({
   tier: r.tier,
   note: r.note,
   createdAt: new Date(r.created_at).toISOString(),
+  ...(r.votes !== undefined ? { votes: Number(r.votes), voted: !!r.voted } : {}),
 });

@@ -25,6 +25,16 @@ export async function requireUser(req: Request): Promise<AuthUser> {
   }
 }
 
+/** The signed-in user if a valid token was sent, otherwise null. Never throws. */
+export async function optionalUser(req: Request): Promise<AuthUser | null> {
+  if (!req.headers.get('authorization')) return null;
+  try {
+    return await requireUser(req);
+  } catch {
+    return null;
+  }
+}
+
 export function decodeExp(jwt: string): number {
   try {
     const p = JSON.parse(Buffer.from(jwt.split('.')[1], 'base64url').toString());

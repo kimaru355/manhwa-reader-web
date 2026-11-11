@@ -37,8 +37,12 @@ export async function checkRate(kind: RateKind, key: string): Promise<void> {
   if (Number(rows[0].n) > max) throw E.limited();
 }
 
-/** Per-day cap for things users create (recommendations). */
-export async function dailyCap(table: 'user_recommendations', userId: string, max: number): Promise<void> {
+/** Per-day cap for things users create (recommendations, bookmark suggestions). */
+export async function dailyCap(
+  table: 'user_recommendations' | 'community_bookmarks',
+  userId: string,
+  max: number,
+): Promise<void> {
   const rows = await db().query(
     `select count(*)::int as c from ${table} where user_id = $1 and created_at > now() - interval '1 day'`,
     [userId],
