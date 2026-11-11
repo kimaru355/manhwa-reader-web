@@ -24,7 +24,7 @@ export const DEFAULT_SOURCES: SourcesMap = {
 
 let client: NeonQueryFunction<false, false> | null = null;
 /** Created on first use so a missing DATABASE_URL only fails the queries, not the import. */
-const db = () => (client ??= neon(process.env.DATABASE_URL!));
+export const db = () => (client ??= neon(process.env.DATABASE_URL!));
 
 let ready: Promise<void> | null = null;
 export function ensureSchema() {
@@ -45,6 +45,50 @@ export function ensureSchema() {
       unique (source, series_id)
     )`);
     await db().query(`create table if not exists app_meta (key text primary key, value jsonb not null)`);
+
+    // User data. user_id points at Neon Auth's user table, so deleting the account deletes everything below.
+    await db().query(`create table if not exists favorites (
+      user_id uuid not null references neon_auth."user"(id) on delete cascade,
+      kind text not null check (kind in ('favorite','wishlist')),
+      series_key text not null,
+      series jsonb not null,
+      updated_at timestamptz not null default now(),
+      primary key (user_id, kind, series_key)
+    )`);
+    await db().query(`create table if not exists bookmarks (
+      user_id uuid not null references neon_auth."user"(id) on delete cascade,
+      id text not null,
+      series_key text not null,
+      chapter_id text not null,
+      chapter_name text not null,
+      page int not null check (page > 0),
+      note text not null default '' check (char_length(note) <= 200),
+      created_at bigint not null,
+      updated_at bigint not null,
+      primary key (user_id, id)
+    )`);
+    await db().query(`create index if not exists bookmarks_user_series on bookmarks (user_id, series_key)`);
+    await db().query(`create table if not exists user_recommendations (
+      id uuid primary key default gen_random_uuid(),
+      user_id uuid not null references neon_auth."user"(id) on delete cascade,
+      source text not null check (source in ('mangadex','webtoons','hentai20','external')),
+      series_id text not null,
+      title text not null,
+      cover text,
+      url text,
+      category text not null check (category in ('manga','manhwa','interesting','novel')),
+      tier text not null check (tier in ('all-time','interesting','good','trial')),
+      note text check (char_length(note) <= 500),
+      created_at timestamptz not null default now(),
+      updated_at timestamptz not null default now(),
+      unique (user_id, source, series_id)
+    )`);
+    await db().query(
+      `create index if not exists user_recs_public on user_recommendations (created_at desc, id desc)`,
+    );
+    await db().query(`create table if not exists rate_limits (
+      key text not null, bucket bigint not null, n int not null default 0, primary key (key, bucket)
+    )`);
   })().catch((e) => {
     ready = null;
     throw e;
