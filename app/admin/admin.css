@@ -27,3 +27,5 @@
 .adm-bm{display:grid;grid-template-columns:1.3fr 1fr 70px 1.5fr auto;gap:6px}
 .adm-actions{display:flex;justify-content:flex-end;gap:8px;position:sticky;bottom:-24px;background:var(--card);padding:12px 0}
 @media(max-width:640px){.adm-grid{grid-template-columns:1fr}.adm-bm{grid-template-columns:1fr 1fr}}
+.adm-card h1,.adm-card h2{font-size:1.5rem;line-height:1.2;letter-spacing:-.01em}
+.adm-card h3{font-size:1rem;margin-top:6px}
