@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Manhwa Reader - Read manhwa, manga and novels on Android</title>
+<meta name="description" content="Browse, read online, download and bookmark manhwa and manga on your Android phone. Free.">
+<meta name="theme-color" content="#0d0b12">
+<link rel="icon" href="favicon.png">
+<style>
+:root{--bg:#0d0b12;--card:#17141f;--card2:#1f1b29;--line:#2a2535;--text:#f4f2f8;--muted:#9b95aa;--accent:#b76cf0;--accent2:#a24be0}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.6;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+nav{display:flex;align-items:center;gap:10px;padding:18px 0;font-weight:600}
+nav img{width:30px;height:30px;border-radius:8px}
+.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center;padding:40px 0 80px;position:relative}
+.hero::before{content:"";position:absolute;right:-10%;top:10%;width:420px;height:420px;background:radial-gradient(circle,rgba(183,108,240,.28),transparent 65%);z-index:-1}
+h1{font-size:clamp(3rem,9vw,5.5rem);line-height:1;letter-spacing:-.03em;font-weight:800}
+h1 span{color:var(--accent)}
+.tag{font-size:1.15rem;font-weight:600;margin:20px 0 8px}
+.sub{color:var(--muted);max-width:460px}
+.btns{display:flex;gap:12px;flex-wrap:wrap;margin:28px 0 14px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:13px 24px;border-radius:999px;font-weight:700;font-size:.95rem;border:1px solid var(--line);transition:.2s}
+.btn.primary{background:var(--accent);color:#14091d;border-color:var(--accent)}
+.btn.primary:hover{background:#c88af5;transform:translateY(-1px)}
+.btn.ghost:hover{background:var(--card2)}
+.note{font-size:.8rem;color:var(--muted)}
+.phone{width:260px;margin:0 auto;background:var(--card);border:2px solid var(--line);border-radius:36px;padding:16px 14px;box-shadow:0 0 70px rgba(162,75,224,.25)}
+.phone .bar{font-size:.8rem;font-weight:700;padding:6px 6px 12px;border-bottom:1px solid var(--line)}
+.tabs{display:flex;text-align:center;font-size:.72rem;color:var(--muted);margin:10px 0}
+.tabs div{flex:1;padding:6px 0;border-bottom:2px solid transparent}
+.tabs .on{color:var(--accent);border-color:var(--accent)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cover{aspect-ratio:3/4;border-radius:12px;position:relative;overflow:hidden}
+.cover::after{content:"";position:absolute;inset:auto 0 0 0;height:40%;background:linear-gradient(transparent,rgba(0,0,0,.6))}
+.cover:nth-child(1){background:linear-gradient(135deg,#5b2a86,#2b1448)}
+.cover:nth-child(2){background:linear-gradient(135deg,#a24be0,#e56ab8)}
+.cover:nth-child(3){background:linear-gradient(135deg,#2a5db0,#5b2a86)}
+.cover:nth-child(4){background:linear-gradient(135deg,#e56ab8,#7a3ad1)}
+.cover:nth-child(5){background:linear-gradient(135deg,#7a3ad1,#1f3a7a)}
+.cover:nth-child(6){background:linear-gradient(135deg,#d64545,#a24be0)}
+section{padding:70px 0}
+h2{font-size:clamp(1.7rem,4vw,2.3rem);letter-spacing:-.02em;margin-bottom:34px}
+.features{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.f{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px;transition:.2s}
+.f:hover{border-color:var(--accent);transform:translateY(-2px)}
+.f .ic{font-size:1.7rem;margin-bottom:10px}
+.f h3{font-size:1.05rem;margin-bottom:4px}
+.f p{color:var(--muted);font-size:.92rem}
+ol{list-style:none;display:grid;gap:14px;max-width:640px}
+ol li{display:flex;gap:16px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 20px}
+ol b{flex:none;width:34px;height:34px;border-radius:50%;background:var(--accent);color:#14091d;display:grid;place-items:center}
+.cta{text-align:center;margin-top:40px}
+footer{border-top:1px solid var(--line);padding:30px 0;text-align:center;color:var(--muted);font-size:.85rem}
+@media(max-width:800px){.hero{grid-template-columns:1fr;padding-bottom:50px}.hero::before{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav><img src="icon.png" alt="">Manhwa Reader</nav>
+
+<header class="hero">
+  <div>
+    <h1>Manhwa<br><span>reader.</span></h1>
+    <p class="tag">Read anywhere, even offline</p>
+    <p class="sub">Browse, read online, download and bookmark your favorite manhwa and manga, all in one clean Android app.</p>
+    <div class="btns">
+      <a class="btn primary" href="manhwa-reader.apk" download>⬇ Download APK</a>
+      <a class="btn ghost" href="#how">How it works</a>
+    </div>
+    <p class="note">Android only · Free · If prompted, allow installs from this source.</p>
+  </div>
+  <div class="phone" aria-hidden="true">
+    <div class="bar">Manhwa Reader</div>
+    <div class="tabs"><div class="on">Home</div><div>Favorites</div><div>Recent</div></div>
+    <div class="grid"><div class="cover"></div><div class="cover"></div><div class="cover"></div><div class="cover"></div><div class="cover"></div><div class="cover"></div></div>
+  </div>
+</header>
+
+<section id="features">
+  <h2>Features</h2>
+  <div class="features">
+    <div class="f"><div class="ic">🔎</div><h3>Discover</h3><p>Browse curated recommendations and search across multiple sources.</p></div>
+    <div class="f"><div class="ic">📖</div><h3>Online Reading</h3><p>Smooth continuous vertical scroll with pinch and double-tap zoom.</p></div>
+    <div class="f"><div class="ic">⬇️</div><h3>Downloads</h3><p>Save chapters to read offline whenever you like.</p></div>
+    <div class="f"><div class="ic">🔖</div><h3>Chapter Bookmarks</h3><p>Bookmark a page and attach a note to remember where the hook lands.</p></div>
+    <div class="f"><div class="ic">❤️</div><h3>Favorites &amp; Wishlist</h3><p>Heart series you love and keep a wishlist of what to read next.</p></div>
+    <div class="f"><div class="ic">🕘</div><h3>Resume Reading</h3><p>Recent history picks up exactly where you stopped.</p></div>
+    <div class="f"><div class="ic">📁</div><h3>Local Folders</h3><p>Read your own PDF chapters from folders you choose.</p></div>
+    <div class="f"><div class="ic">💾</div><h3>Backup &amp; Restore</h3><p>Export your library and bookmarks, and bring them back anytime.</p></div>
+  </div>
+</section>
+
+<section id="how">
+  <h2>How to Use</h2>
+  <ol>
+    <li><b>1</b>Download and install the APK on your Android device.</li>
+    <li><b>2</b>Open the app and browse Home or Discover.</li>
+    <li><b>3</b>Tap a series, then pick a chapter to start reading.</li>
+    <li><b>4</b>Heart it, wishlist it, or bookmark a page with a note.</li>
+    <li><b>5</b>Download chapters for offline reading.</li>
+    <li><b>6</b>Add your own folders in Settings to read local PDFs.</li>
+  </ol>
+  <div class="cta"><a class="btn primary" href="manhwa-reader.apk" download>⬇ Download APK</a></div>
+</section>
+</div>
+<footer>© 2026 Manhwa Reader. All rights reserved.<br>Not affiliated with any manhwa publisher or source.</footer>
+</body>
+</html>
