@@ -1,13 +1,3 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Manhwa Reader - Read manhwa, manga and novels on Android</title>
-<meta name="description" content="Browse, read online, download and bookmark manhwa and manga on your Android phone. Free.">
-<meta name="theme-color" content="#0d0b12">
-<link rel="icon" href="favicon.png">
-<style>
 :root{--bg:#0d0b12;--card:#17141f;--card2:#1f1b29;--line:#2a2535;--text:#f4f2f8;--muted:#9b95aa;--accent:#b76cf0;--accent2:#a24be0}
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
@@ -56,57 +46,3 @@ ol b{flex:none;width:34px;height:34px;border-radius:50%;background:var(--accent)
 .cta{text-align:center;margin-top:40px}
 footer{border-top:1px solid var(--line);padding:30px 0;text-align:center;color:var(--muted);font-size:.85rem}
 @media(max-width:800px){.hero{grid-template-columns:1fr;padding-bottom:50px}.hero::before{display:none}}
-</style>
-</head>
-<body>
-<div class="wrap">
-<nav><img src="icon.png" alt="">Manhwa Reader</nav>
-
-<header class="hero">
-  <div>
-    <h1>Manhwa<br><span>reader.</span></h1>
-    <p class="tag">Read anywhere, even offline</p>
-    <p class="sub">Browse, read online, download and bookmark your favorite manhwa and manga, all in one clean Android app.</p>
-    <div class="btns">
-      <a class="btn primary" href="manhwa-reader.apk" download>⬇ Download APK</a>
-      <a class="btn ghost" href="#how">How it works</a>
-    </div>
-    <p class="note">Android only · Free · If prompted, allow installs from this source.</p>
-  </div>
-  <div class="phone" aria-hidden="true">
-    <div class="bar">Manhwa Reader</div>
-    <div class="tabs"><div class="on">Home</div><div>Favorites</div><div>Recent</div></div>
-    <div class="grid"><div class="cover"></div><div class="cover"></div><div class="cover"></div><div class="cover"></div><div class="cover"></div><div class="cover"></div></div>
-  </div>
-</header>
-
-<section id="features">
-  <h2>Features</h2>
-  <div class="features">
-    <div class="f"><div class="ic">🔎</div><h3>Discover</h3><p>Browse curated recommendations and search across multiple sources.</p></div>
-    <div class="f"><div class="ic">📖</div><h3>Online Reading</h3><p>Smooth continuous vertical scroll with pinch and double-tap zoom.</p></div>
-    <div class="f"><div class="ic">⬇️</div><h3>Downloads</h3><p>Save chapters to read offline whenever you like.</p></div>
-    <div class="f"><div class="ic">🔖</div><h3>Chapter Bookmarks</h3><p>Bookmark a page and attach a note to remember where the hook lands.</p></div>
-    <div class="f"><div class="ic">❤️</div><h3>Favorites &amp; Wishlist</h3><p>Heart series you love and keep a wishlist of what to read next.</p></div>
-    <div class="f"><div class="ic">🕘</div><h3>Resume Reading</h3><p>Recent history picks up exactly where you stopped.</p></div>
-    <div class="f"><div class="ic">📁</div><h3>Local Folders</h3><p>Read your own PDF chapters from folders you choose.</p></div>
-    <div class="f"><div class="ic">💾</div><h3>Backup &amp; Restore</h3><p>Export your library and bookmarks, and bring them back anytime.</p></div>
-  </div>
-</section>
-
-<section id="how">
-  <h2>How to Use</h2>
-  <ol>
-    <li><b>1</b>Download and install the APK on your Android device.</li>
-    <li><b>2</b>Open the app and browse Home or Discover.</li>
-    <li><b>3</b>Tap a series, then pick a chapter to start reading.</li>
-    <li><b>4</b>Heart it, wishlist it, or bookmark a page with a note.</li>
-    <li><b>5</b>Download chapters for offline reading.</li>
-    <li><b>6</b>Add your own folders in Settings to read local PDFs.</li>
-  </ol>
-  <div class="cta"><a class="btn primary" href="manhwa-reader.apk" download>⬇ Download APK</a></div>
-</section>
-</div>
-<footer>© 2026 Manhwa Reader. All rights reserved.<br>Not affiliated with any manhwa publisher or source.</footer>
-</body>
-</html>
