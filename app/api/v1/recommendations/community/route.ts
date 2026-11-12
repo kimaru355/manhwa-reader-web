@@ -39,7 +39,7 @@ export const GET = route(
       return `$${args.length}`;
     };
 
-    const rank = q.sort === 'popular' ? 'coalesce(v.total, 0)' : q.sort === 'week' ? 'coalesce(v.week, 0)' : '0';
+    const rank = q.sort === 'popular' ? 'coalesce(v.total, 0)' : q.sort === 'week' ? 'coalesce(v.week, 0)' : '0::int';
     const votedSql = user
       ? `exists (select 1 from recommendation_votes mv where mv.recommendation_id = r.id and mv.user_id = ${arg(user.id)}::uuid)`
       : 'false';
