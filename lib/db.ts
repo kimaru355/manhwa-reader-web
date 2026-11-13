@@ -71,7 +71,7 @@ export function ensureSchema() {
     await db().query(`create table if not exists user_recommendations (
       id uuid primary key default gen_random_uuid(),
       user_id uuid not null references neon_auth."user"(id) on delete cascade,
-      source text not null check (source in ('mangadex','webtoons','hentai20','novelfull','external')),
+      source text not null check (source in ('mangadex','webtoons','hentai20','novelfull','novelbin','external')),
       series_id text not null,
       title text not null,
       cover text,
@@ -101,7 +101,7 @@ export function ensureSchema() {
     await db().query(`create table if not exists community_bookmarks (
       id uuid primary key default gen_random_uuid(),
       user_id uuid not null references neon_auth."user"(id) on delete cascade,
-      source text not null check (source in ('mangadex','webtoons','hentai20','novelfull')),
+      source text not null check (source in ('mangadex','webtoons','hentai20','novelfull','novelbin')),
       series_id text not null,
       series_title text not null,
       chapter_id text not null,
@@ -121,13 +121,13 @@ export function ensureSchema() {
     await db().query(`create index if not exists community_bm_status on community_bookmarks (status, created_at)`);
     // Tables made before novels were supported still list the old sources; widen their checks once.
     for (const [table, list] of [
-      ['user_recommendations', `'mangadex','webtoons','hentai20','novelfull','external'`],
-      ['community_bookmarks', `'mangadex','webtoons','hentai20','novelfull'`],
+      ['user_recommendations', `'mangadex','webtoons','hentai20','novelfull','novelbin','external'`],
+      ['community_bookmarks', `'mangadex','webtoons','hentai20','novelfull','novelbin'`],
     ] as const) {
       await db().query(`do $$ declare c text; begin
         select conname into c from pg_constraint
           where conrelid = '${table}'::regclass and contype = 'c' and pg_get_constraintdef(oid) like '%hentai20%'
-            and pg_get_constraintdef(oid) not like '%novelfull%';
+            and pg_get_constraintdef(oid) not like '%novelbin%';
         if c is not null then
           execute format('alter table ${table} drop constraint %I', c);
           execute 'alter table ${table} add constraint ${table}_source_check check (source in (${list.replace(/'/g, "''")}))';

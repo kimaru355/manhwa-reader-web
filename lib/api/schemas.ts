@@ -95,7 +95,7 @@ export const communityQuery = z.object({
 
 /** A reader suggesting a bookmark for everyone. Reviewed before it is shown. */
 export const communityBookmarkBody = z.strictObject({
-  source: z.enum(['mangadex', 'webtoons', 'hentai20', 'novelfull']),
+  source: z.enum(['mangadex', 'webtoons', 'hentai20', 'novelfull', 'novelbin']),
   seriesId: z.string().min(1).max(200),
   seriesTitle: z.string().min(1).max(300),
   chapterId: z.string().min(1).max(300),
@@ -105,6 +105,6 @@ export const communityBookmarkBody = z.strictObject({
 });
 
 export const communityBookmarksQuery = z.object({
-  source: z.enum(['mangadex', 'webtoons', 'hentai20', 'novelfull']),
+  source: z.enum(['mangadex', 'webtoons', 'hentai20', 'novelfull', 'novelbin']),
   seriesId: z.string().min(1).max(200),
 });

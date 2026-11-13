@@ -1,13 +1,14 @@
+import Link from 'next/link';
+
 const APK = '/manhwa-reader.apk';
 
 const features = [
   ['🔎', 'Discover', 'Browse curated recommendations and search across multiple sources.'],
   ['📖', 'Online Reading', 'Smooth continuous vertical scroll with pinch and double-tap zoom.'],
-  ['⬇️', 'Downloads', 'Save chapters to read offline whenever you like.'],
+  ['⬇️', 'Downloads', 'Save chapters to read offline whenever you like. Downloads are only in the app; the website reads online.'],
   ['🔖', 'Chapter Bookmarks', 'Bookmark a page and attach a note to remember where the hook lands.'],
   ['❤️', 'Favorites & Wishlist', 'Heart series you love and keep a wishlist of what to read next.'],
   ['🕘', 'Resume Reading', 'Recent history picks up exactly where you stopped.'],
-  ['📁', 'Local Folders', 'Read your own PDF chapters from folders you choose.'],
   ['💾', 'Backup & Restore', 'Export your library and bookmarks, and bring them back anytime.'],
 ];
 
@@ -17,7 +18,6 @@ const steps = [
   'Tap a series, then pick a chapter to start reading.',
   'Heart it, wishlist it, or bookmark a page with a note.',
   'Download chapters for offline reading.',
-  'Add your own folders in Settings to read local PDFs.',
 ];
 
 function DownloadButton() {
@@ -36,6 +36,9 @@ export default function Home() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/icon.png" alt="" />
           Manhwa Reader
+          <Link href="/" style={{ marginLeft: 'auto', color: 'var(--accent)' }}>
+            Read online →
+          </Link>
         </nav>
 
         <header className="hero">
@@ -51,9 +54,9 @@ export default function Home() {
             </p>
             <div className="btns">
               <DownloadButton />
-              <a className="btn ghost" href="#how">
-                How it works
-              </a>
+              <Link className="btn ghost" href="/">
+                Read online
+              </Link>
             </div>
             <p className="note">Android only · Free · If prompted, allow installs from this source.</p>
           </div>

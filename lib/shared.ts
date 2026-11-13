@@ -1,5 +1,5 @@
 export const CATEGORIES = ['manga', 'manhwa', 'interesting', 'novel'] as const;
-export const SOURCES = ['mangadex', 'webtoons', 'hentai20', 'novelfull', 'external'] as const;
+export const SOURCES = ['mangadex', 'webtoons', 'hentai20', 'novelfull', 'novelbin', 'external'] as const;
 export const TIERS = ['all-time', 'good', 'interesting', 'trial'] as const;
 
 export type Category = (typeof CATEGORIES)[number];
