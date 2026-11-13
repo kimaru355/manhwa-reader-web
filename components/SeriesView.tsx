@@ -44,33 +44,22 @@ export function SeriesView({
   const names = useMemo(() => new Map(chapters.map((c, i) => [c.id, { name: c.name, index: i }])), [chapters]);
   const resumeIdx = progress ? (names.get(progress.chapterId)?.index ?? -1) : -1;
 
-  const marked = useMemo(() => {
-    const ids = new Set<string>();
-    for (const m of [...author, ...community, ...mine.map((b) => ({ chapterId: b.chapterId }))]) ids.add(m.chapterId);
-    return ids;
+  // Every bookmark of a chapter, shown under it in the list: the author's, the community's and your own.
+  type Note = { key: string; by: string; page?: number; note?: string; mine?: string };
+  const notesByChapter = useMemo(() => {
+    const map = new Map<string, Note[]>();
+    const add = (chapterId: string, n: Note) => map.set(chapterId, [...(map.get(chapterId) ?? []), n]);
+    author.forEach((m, i) => add(m.chapterId, { key: `a${i}`, by: 'Author', page: m.page, note: m.note }));
+    community.forEach((m, i) => add(m.chapterId, { key: `c${m.id ?? i}`, by: 'Community', page: m.page, note: m.note }));
+    mine.forEach((b) => add(b.chapterId, { key: `m${b.id}`, by: 'Yours', page: b.page, note: b.note, mine: b.id }));
+    for (const list of map.values()) list.sort((x, y) => (x.page ?? 0) - (y.page ?? 0));
+    return map;
   }, [author, community, mine]);
 
   const rows = chapters.map((c, i) => ({ c, i }));
   if (newestFirst) rows.reverse();
 
   const open = (chapterId: string, page = 1) => readHref(item, chapterId, page);
-
-  const markRow = (m: Mark, by: string, onRemove?: () => void) => {
-    const ch = names.get(m.chapterId);
-    return (
-      <div className="mark" key={`${by}-${m.id ?? `${m.chapterId}-${m.page}`}`}>
-        <span className="by">{by}</span>
-        <div className="grow">
-          <Link href={open(m.chapterId, m.page ?? 1)}>
-            {m.chapterName ?? ch?.name ?? m.chapterId}
-            {kind === 'images' && m.page ? ` · p.${m.page}` : ''}
-          </Link>
-          {m.note ? <div className="note">{m.note}</div> : null}
-        </div>
-        {onRemove ? <button onClick={onRemove}>Remove</button> : null}
-      </div>
-    );
-  };
 
   return (
     <>
@@ -92,19 +81,6 @@ export function SeriesView({
         <RecommendBox item={item} />
       </div>
 
-      {author.length || community.length || mine.length ? (
-        <div className="panel">
-          <h3>Bookmarks</h3>
-          {author.map((m) => markRow(m, 'Author'))}
-          {community.map((m) => markRow(m, 'Community'))}
-          {mine.map((b) =>
-            markRow({ id: b.id, chapterId: b.chapterId, chapterName: b.chapterName, page: b.page, note: b.note }, 'Yours', () =>
-              removeBookmark(b.id),
-            ),
-          )}
-        </div>
-      ) : null}
-
       {chapters.length ? (
         <>
           <div className="tier">
@@ -114,21 +90,35 @@ export function SeriesView({
             </button>
           </div>
           <div className="chlist">
-            {rows.map(({ c, i }) => (
-              <Link
-                key={c.id}
-                href={open(c.id, resumeIdx === i && progress ? progress.page : 1)}
-                className={`ch ${resumeIdx === i ? 'cur' : resumeIdx >= 0 && i < resumeIdx ? 'read' : ''}`}
-              >
-                <span className="nm">{c.name}</span>
-                {marked.has(c.id) ? <span className="tag2">★</span> : null}
-                {resumeIdx === i && kind === 'images' && progress ? (
-                  <span className="tag2">
-                    p.{progress.page}/{progress.total || '?'}
-                  </span>
-                ) : null}
-              </Link>
-            ))}
+            {rows.map(({ c, i }) => {
+              const notes = notesByChapter.get(c.id) ?? [];
+              return (
+                <div key={c.id} className={`ch ${resumeIdx === i ? 'cur' : resumeIdx >= 0 && i < resumeIdx ? 'read' : ''}`}>
+                  <Link href={open(c.id, resumeIdx === i && progress ? progress.page : 1)} className="chl">
+                    <span className="nm">{c.name}</span>
+                    {resumeIdx === i && kind === 'images' && progress ? (
+                      <span className="tag2">
+                        p.{progress.page}/{progress.total || '?'}
+                      </span>
+                    ) : null}
+                  </Link>
+                  {notes.map((n) => (
+                    <div className="cn" key={n.key}>
+                      <Link href={open(c.id, n.page ?? 1)} className="cn-t">
+                        <span className="by">{n.by}</span>
+                        {kind === 'images' && n.page ? <span className="pp">p.{n.page}</span> : null}
+                        {n.note ? <span className="note">{n.note}</span> : null}
+                      </Link>
+                      {n.mine ? (
+                        <button aria-label="Remove bookmark" onClick={() => removeBookmark(n.mine!)}>
+                          ✕
+                        </button>
+                      ) : null}
+                    </div>
+                  ))}
+                </div>
+              );
+            })}
           </div>
         </>
       ) : null}
