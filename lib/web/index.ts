@@ -10,8 +10,8 @@ const ALL: Record<Source['id'], Source> = { mangadex, webtoons, hentai20, novelb
 export const getSource = (id: string): Source | undefined => (id in ALL ? ALL[id as Source['id']] : undefined);
 export const isSourceId = (id: string): id is SourceId => id in ALL || id === 'external';
 
-/** The adult source is only offered when the operator switches it on. */
-export const adultEnabled = process.env.WEB_ADULT === '1';
+/** The 18+ section is on unless the operator sets WEB_ADULT=0. Readers still confirm their age first. */
+export const adultEnabled = process.env.WEB_ADULT !== '0';
 
 export type Section = 'manga' | 'manhwa' | 'novel' | 'interesting';
 export const SECTION_SOURCE: Record<Section, Source['id']> = {

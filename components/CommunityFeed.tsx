@@ -112,6 +112,15 @@ export function CommunityFeed({ adultEnabled }: { adultEnabled: boolean }) {
     }
   };
 
+  // The 18+ filter asks for confirmation once per browser, like the 18+ pages do.
+  const pickCategory = (v: string) => {
+    if (v === 'adult' && !document.cookie.split('; ').includes('adult=1')) {
+      if (!window.confirm('This section contains adult material and is only for people aged 18 or older. Continue?')) return;
+      document.cookie = 'adult=1; path=/; max-age=31536000; samesite=lax';
+    }
+    setCategory(v);
+  };
+
   const cats = CATEGORIES.filter(([c]) => c !== 'adult' || adultEnabled);
 
   return (
@@ -134,7 +143,7 @@ export function CommunityFeed({ adultEnabled }: { adultEnabled: boolean }) {
       </div>
       <div className="chips">
         {cats.map(([v, l]) => (
-          <button key={v} className={`chip ${category === v ? 'on' : ''}`} onClick={() => setCategory(v)}>
+          <button key={v} className={`chip ${category === v ? 'on' : ''}`} onClick={() => pickCategory(v)}>
             {l}
           </button>
         ))}

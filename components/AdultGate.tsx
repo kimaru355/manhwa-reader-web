@@ -9,7 +9,7 @@ export function AdultGate() {
   return (
     <div className="gate">
       <h1>18+ content</h1>
-      <p>This section contains material for adults only. Confirm that you are 18 or older to continue.</p>
+      <p>This section contains adult material and is only for people aged 18 or older. Do you want to continue?</p>
       <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
         <button
           className="btn2"
@@ -18,10 +18,10 @@ export function AdultGate() {
             router.refresh();
           }}
         >
-          I am 18 or older
+          I am 18+, continue
         </button>
         <Link className="btn2 ghost" href="/">
-          Leave
+          Cancel
         </Link>
       </div>
     </div>
